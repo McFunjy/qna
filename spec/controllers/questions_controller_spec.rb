@@ -14,11 +14,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:create_post) { post :create, params: { question: question_params } }    
-    
+    let(:create_post) { post :create, params: { question: question_params } }
+
     context 'with valid attributes' do
       let(:question_params) { attributes_for(:question) }
-      
+
       it 'saves a new question in the database' do
         expect { create_post }.to change(Question, :count).by(1)
       end
