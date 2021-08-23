@@ -33,7 +33,7 @@ RSpec.describe QuestionsController, type: :controller do
       let(:question_params) { attributes_for(:question, :invalid) }
 
       it 'does not save the question' do
-        expect { create_post }.to_not change(Question, :count)
+        expect { create_post }.not_to change(Question, :count)
       end
 
       it 're-renders new view' do

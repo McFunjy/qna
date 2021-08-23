@@ -1,6 +1,6 @@
 class AnswersController < ApplicationController
   before_action :find_question, only: %i[new create]
-  
+
   def show
     @answer = Answer.find(params[:id])
   end

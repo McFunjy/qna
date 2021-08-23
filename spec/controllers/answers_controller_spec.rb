@@ -38,7 +38,7 @@ RSpec.describe AnswersController, type: :controller do
       let(:answer_params) { attributes_for(:answer, :invalid) }
 
       it 'does not save the answer' do
-        expect { create_post }.to_not change(Answer, :count)
+        expect { create_post }.not_to change(Answer, :count)
       end
 
       it 're-renders new view' do
