@@ -16,7 +16,7 @@ I'd like to be able to add an answer to the question
 
     scenario 'adds an answer' do
       fill_in 'Body', with: 'text text text'
-      click_on 'Answer'
+      click_on 'Add'
 
       expect(page).to have_content 'Your answer successfully added.'
       expect(page).to have_content question.title
@@ -25,7 +25,7 @@ I'd like to be able to add an answer to the question
     end
 
     scenario 'adds an answer with errors' do
-      click_on 'Answer'
+      click_on 'Add'
 
       expect(page).to have_content "Body can't be blank"
     end
@@ -33,7 +33,7 @@ I'd like to be able to add an answer to the question
 
   scenario 'Unauthenticated user tries to add an answer' do
     visit question_path(question)
-    click_on 'Answer'
+    click_on 'Add'
 
     expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end
