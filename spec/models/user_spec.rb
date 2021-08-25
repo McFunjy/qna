@@ -1,6 +1,7 @@
 RSpec.describe User, type: :model do
   describe 'Associations' do
     it { is_expected.to have_many(:questions).dependent(:destroy) }
+    it { is_expected.to have_many(:answers).dependent(:destroy) }
   end
 
   describe 'User #author_of?' do
