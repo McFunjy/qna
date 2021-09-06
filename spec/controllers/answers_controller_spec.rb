@@ -1,8 +1,11 @@
 RSpec.describe AnswersController, type: :controller do
   let(:answer) { create(:answer) }
   let(:question) { create(:question) }
+  let(:user) { create(:user) }
 
   describe 'GET #new' do
+    before { login(user) }
+
     before { get :new, params: { question_id: question } }
 
     it 'assigns the requested question to @question' do
@@ -19,6 +22,8 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'POST #create' do
+    before { login(user) }
+
     let(:create_post) { post :create, params: { question_id: question, answer: answer_params } }
 
     context 'with valid attributes' do
@@ -28,9 +33,14 @@ RSpec.describe AnswersController, type: :controller do
         expect { create_post }.to change(question.answers, :count).by(1)
       end
 
-      it 'redirects to show view' do
+      it 'assigned to author' do
         create_post
-        expect(response).to redirect_to assigns(:answer)
+        expect(assigns(:answer).author).to eq user
+      end
+
+      it 'redirects to question show view' do
+        create_post
+        expect(response).to redirect_to assigns(:answer).question
       end
     end
 
@@ -38,12 +48,12 @@ RSpec.describe AnswersController, type: :controller do
       let(:answer_params) { attributes_for(:answer, :invalid) }
 
       it 'does not save the answer' do
-        expect { create_post }.to_not change(Answer, :count)
+        expect { create_post }.not_to change(Answer, :count)
       end
 
-      it 're-renders new view' do
+      it 're-renders question show view' do
         create_post
-        expect(response).to render_template :new
+        expect(response).to render_template 'questions/show'
       end
     end
   end
@@ -57,6 +67,38 @@ RSpec.describe AnswersController, type: :controller do
 
     it 'renders show view' do
       expect(response).to render_template :show
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    before { login(user) }
+
+    let(:delete_request) { delete :destroy, params: { id: answer } }
+
+    context 'when user is an author' do
+      let!(:answer) { create(:answer, author: user) }
+
+      it 'deletes the answer' do
+        expect { delete_request }.to change(user.answers, :count).by(-1)
+      end
+
+      it "redirects to answer's question show" do
+        delete_request
+        expect(response).to redirect_to question_path(answer.question)
+      end
+    end
+
+    context 'when user is not an author' do
+      let!(:answer) { create(:answer) }
+
+      it 'does not delete the question' do
+        expect { delete_request }.to_not change(Answer, :count)
+      end
+    end
+
+    it "redirects to answer's question show" do
+      delete_request
+      expect(response).to redirect_to question_path(answer.question)
     end
   end
 end
